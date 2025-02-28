@@ -7,7 +7,12 @@ export const signup = async (req, res) => {
   try {
     const result = signupSchema.safeParse(req.body);
     if (!result.success) {
-      return res.status(400).json({ error: result.error.format() });
+      return res.status(400).json({
+        errors: result.error.issues.map((issue) => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
+      });
     }
 
     const { fullname, username, email, password } = req.body;
